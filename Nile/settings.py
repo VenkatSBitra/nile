@@ -20,12 +20,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '2bk*@b7vjwohxdvjlfus_+=3zq#l*1ophi&c!mzjo+j$w60@#n'
+# SECRET_KEY = '2bk*@b7vjwohxdvjlfus_+=3zq#l*1ophi&c!mzjo+j$w60@#n'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['djangosupermarketapp.herokuapp.com']
 
 
 # Application definition
@@ -136,10 +137,10 @@ LOGOUT_REDIRECT_URL = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'djangosupermarketapp@gmail.com'
-DEFAULT_FROM_EMAIL = 'djangosupermarketapp@gmail.com'
-SERVER_EMAIL ='djangosupermarketapp@gmail.com'
-EMAIL_HOST_PASSWORD = 'SuperMarket@123'
+EMAIL_HOST_USER = os.environ.get('DJANGO_SUPERMARKET_EMAIL')
+DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_SUPERMARKET_EMAIL')
+SERVER_EMAIL = os.environ.get('DJANGO_SUPERMARKET_EMAIL')
+EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_SUPERMARKET_PASS')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
