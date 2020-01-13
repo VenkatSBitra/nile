@@ -1,0 +1,52 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block header %}
+    <header>
+        <div class="sticky-top">
+            <nav class="navbar navbar-expand-md">
+                <a href="{% url 'homePage' %}" class="navbar-brand">NILE</a>
+                <div class="mr-auto">
+                    <ul class="navbar-nav">
+                        <li class="navitem mr-auto">
+                            <a href="{% url 'homePage' %}" class="nav-link">Home</a>
+                        </li>
+                        <li class="navitem">
+                            <a href="{% url 'items' %}" class="nav-link">Shop</a>
+                        </li>
+                        <li class="navitem">
+                            <a href="{% url 'blog_home' %}" class="nav-link">Blog</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="ml-auto" id="navbarNavDropdown">
+                    <ul class="navbar-nav">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a href="{% url 'cart' %}" class="nav-link"><span class="btn-success">{{ cartItemsNum }}</span> Cart</a>
+                            </li>
+                            <li class="nav-item dropdown btn-warning">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{ user.get_username }}
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a href="{% url 'profile' %}" class="dropdown-item">Profile</a>
+                                    <a href="{% url 'orders' %}" class="dropdown-item">Orders</a>
+                                    <a href="{% url 'logout' %}" class="dropdown-item">Log Out</a>
+                                </div>
+                            </li>
+                        {% else %}
+                            <li class="navitem">
+                                <a href="{% url 'register' %}" class="nav-link">Register</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="{% url 'login' %}" class="nav-link">Login</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+{% endblock header %}
+

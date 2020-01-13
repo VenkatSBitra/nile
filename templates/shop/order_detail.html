@@ -1,0 +1,19 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}
+    Orders
+{% endblock title %}
+
+{% block content %}
+        <div>
+            <p>{{ order.OrderDate }}</p>
+            {% for item in order.Items.all %}
+                <hr>
+                <p>{{ item.Item }}</p>
+                <p>{{ item.Quantity }}</p>
+                <p>{{ item.Item.FinalPrice }}</p>
+                <hr>
+            {% endfor %}
+        </div>
+        <hr>
+{% endblock content %}

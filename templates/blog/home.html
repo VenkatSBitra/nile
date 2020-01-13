@@ -1,0 +1,91 @@
+{% extends 'blog/base.html' %}
+
+{% block blogheader %}
+    <h1>Blog Home</h1>
+{% endblock blogheader %}
+
+{% block blogsidebar %}
+    <div>
+        {% if user.is_authenticated %}
+            <p class="h2">Want to Create a Post?</p>
+            <a href="{% url 'post-create' %}" class="btn btn-outline-primary">Create Post</a>
+        {% else %}
+            <p class="h2"><a href="{% url 'login' %}">Sign In</a> to create a post.</p>
+            <p class="h2">Don't have an account. Register <a href="{% url 'register' %}">here.</a></p>
+        {% endif %}
+    </div>
+{% endblock blogsidebar %}
+
+{% block blogcontent %}
+    {% for post in posts %}
+        <div class="card mt-4 mb-3 ml-2 mr-2" id="blog_card">
+            <div class="row no-gutters">
+                <div class="col-4 card_user_details pt-2 pb-2 border-right">
+                    <img height="200" width="200" src="{{ post.author.profile.image.url }}" alt="Profile Picture">
+                    <hr>
+                    <a href="{% url 'user-posts' post.author.username %}" class="h5">{{ post.author.get_username }}</a>
+                </div>
+                <div class="col-8">
+                    <div class="card-body">
+                        <a href="{% url 'post-detail' post.id %}">
+                            <h3 class="card-title">{{ post.title }}</h3>
+                        </a>
+                        <p class="card-text text-muted">{{ post.date_posted }}</p>
+                        <hr>
+                        <p class="card-text h5">{{ post.content }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <hr>
+    {% if is_paginated %}
+        <div>
+            <nav>
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a href="?page=1" class="page-link">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Previous</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a href="#" class="page-link" aria-disabled="true" tabindex="-1">First</a>
+                        </li>
+                        <li class="page-item disabled">
+                            <a href="#" class="page-link" aria-disabled="true" tabindex="-1">Previous</a>
+                        </li>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">Last</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a href="#" class="page-link" aria-disabled="true" tabindex="-1">Next</a>
+                        </li>
+                        <li class="page-item disabled">
+                            <a href="#" class="page-link" aria-disabled="true" tabindex="-1">Last</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    {% endif %}
+{% endblock blogcontent %}

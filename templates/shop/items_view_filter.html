@@ -1,0 +1,147 @@
+{% extends 'shop/base.html' %}
+
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+{% block title %}
+    Items
+{% endblock title %}
+
+{% block content %}
+    <div>
+        <form method="GET" class="p-2 m-2 border">
+            <fieldset>
+                <div class="form-row m-3">
+                    <div class="col">
+                        <label class="form-control-lg">Name: {{ form.name }}</label><br>
+                    </div>
+                    <div class="col">
+                        <label class="form-control-lg">Category: {{ form.category|add_class:"custom-select" }}</label><br>
+                    </div>
+                    <div class="col">
+                        <label class="form-control-lg">Minimum Price: {{ form.min_price }}</label><br>
+                    </div>
+                    <div class="col">
+                        <label class="form-control-lg">Maximum Price: {{ form.max_price }}</label><br>
+                    </div>
+                    <div class="col">
+                        <label class="form-control-lg">Minimum Discount: {{ form.min_discount }}</label><br>
+                    </div>
+                </div>
+                <div class="form-row pt-3 m-3">
+                    <button type="submit" class="btn btn-outline-primary btn-lg ml-auto mr-auto">Search</button>
+                </div>
+
+            </fieldset>
+        </form>
+    </div>
+
+
+    <div class="align-items-center">
+        {% if items.paginator.count == 0 %}
+            <p>No items have been found with the current filter parameters.</p>
+        {% endif %}
+        {% for item in items %}
+            <div class="card mt-4 mb-3 ml-2 mr-2 w-25 d-inline-block" id="blog_card">
+                <div class="row no-gutters">
+                    <div class="col-6 card_user_details pt-2 pb-2 border-right">
+                        <img height="200" width="200" src="{{ item.Image.url }}" alt="Item Picture">
+                        <hr>
+                        <h5>{{ item.Name }}</h5>
+                    </div>
+                    <div class="col-6">
+                        <div class="card-body">
+                            {% if item.Discount != 0 %}
+                                <h3 class="card-title"><del>&#8377; {{ item.Price }}</del>&nbsp;&#8377; {{ item.FinalPrice }}</h3>
+                            {% else %}
+                                <h3 class="card-title">&#8377; {{ item.Price }}</h3>
+                            {% endif %}
+                            <hr>
+                            <p class="card-text h5">{{ item.Details }}</p>
+                            {% if item.Stock > 0 and item.Stock < 50 %}
+                                <hr>
+                                <p class="card-text h5 text-warning">Item Running Out of Stock.</p>
+                                <p class="card-text h5 text-warning">Purchase Quickly.</p>
+                            {% elif item.Stock == 0 %}
+                                <hr>
+                                <p class="card-text h5 text-danger">Item Currently Out of Stock.</p>
+                            {% endif %}
+                            {% if user.is_authenticated and item.Stock != 0 %}
+                                <hr>
+                                {% for test in cartItems %}
+                                    {% if item == test.Item %}
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="number" value="{{ test.Quantity }}" name="updateq" min="1" max="{{ item.Item.Stock }}">
+                                            <input type="hidden" value="{{ item.pk }}" name="updatei">
+                                            <button type="submit" class="btn btn-outline-primary">Update</button>
+                                        </form>
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" value="{{ item.pk }}" name="remove">
+                                            <button type="submit" class="btn btn-outline-danger">Remove</button>
+                                        </form>
+                                    {% endif %}
+                                {% endfor %}
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" value="{{ item.pk }}" name="cart">
+                                    <button type="submit" class="btn btn-outline-primary">Add to Cart</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% if items.has_other_pages %}
+        <div>
+            <nav>
+                <ul class="pagination pagination-lg">
+                    {% if items.has_previous %}
+                        <li class="page-item ml-auto">
+                            <a href="?name={{ search_name }}&category={{ search_category }}&min_price={{ min_price }}&max_price={{ max_price }}&min_discount={{ min_discount }}&page=1" class="page-link">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a href="?name={{ search_name }}&category={{ search_category }}&min_price={{ min_price }}&max_price={{ max_price }}&min_discount={{ min_discount }}&page={{ items.previous_page_number }}" class="page-link">Previous</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled ml-auto">
+                            <a href="#" class="page-link" aria-disabled="true" tabindex="-1">First</a>
+                        </li>
+                        <li class="page-item disabled">
+                            <a href="#" class="page-link" aria-disabled="true" tabindex="-1">Previous</a>
+                        </li>
+                    {% endif %}
+                    {% for num in items.paginator.page_range %}
+                        {% if items.number == num %}
+                            <li class="page-item active">
+                                <a href="?name={{ search_name }}&category={{ search_category }}&min_price={{ min_price }}&max_price={{ max_price }}&min_discount={{ min_discount }}&page={{ num }}" class="page-link">{{ num }}</a>
+                            </li>
+                        {% elif num > items.number|add:'-3' and num < items.number|add:'3' %}
+                            <li class="page-item">
+                                <a href="?name={{ search_name }}&category={{ search_category }}&min_price={{ min_price }}&max_price={{ max_price }}&min_discount={{ min_discount }}&page={{ num }}" class="page-link">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if items.has_next %}
+                        <li class="page-item">
+                            <a href="?name={{ search_name }}&category={{ search_category }}&min_price={{ min_price }}&max_price={{ max_price }}&min_discount={{ min_discount }}&page={{ items.next_page_number }}" class="page-link">Next</a>
+                        </li>
+                        <li class="page-item mr-auto">
+                            <a href="?name={{ search_name }}&category={{ search_category }}&min_price={{ min_price }}&max_price={{ max_price }}&min_discount={{ min_discount }}&page={{ items.paginator.num_pages }}" class="page-link">Last</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a href="#" class="page-link" aria-disabled="true" tabindex="-1">Next</a>
+                        </li>
+                        <li class="page-item disabled mr-auto">
+                            <a href="#" class="page-link" aria-disabled="true" tabindex="-1">Last</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    {% endif %}
+{% endblock content %}

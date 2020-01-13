@@ -1,0 +1,74 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if user.is_authenticated %}
+        Blog - {{ user.get_username }}
+    {% else %}
+        Blog
+    {% endif %}
+{% endblock title %}
+
+{% block header %}
+    <header>
+        <div class="sticky-top">
+            <nav class="navbar navbar-expand-md">
+                <a href="{% url 'homePage' %}" class="navbar-brand">NILE</a>
+                <div class="mr-auto">
+                    <ul class="navbar-nav">
+                        <li class="navitem mr-auto">
+                            <a href="{% url 'blog_home' %}" class="nav-link">Home</a>
+                        </li>
+                        <li class="navitem">
+                            <a href="{% url 'blog_about' %}" class="nav-link">About</a>
+                        </li>
+                        <li class="navitem">
+                            <a href="{% url 'homePage' %}" class="nav-link">Go to Shop Home</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="ml-auto" id="navbarNavDropdown">
+                    <ul class="navbar-nav">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{ user.get_username }}
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a href="{% url 'profile' %}" class="dropdown-item">Profile</a>
+                                    <a href="#" class="dropdown-item">Orders</a>
+                                    <a href="{% url 'logout' %}" class="dropdown-item">Log Out</a>
+                                </div>
+                            </li>
+                        {% else %}
+                            <li class="navitem">
+                                <a href="{% url 'register' %}" class="nav-link">Register</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="{% url 'login' %}" class="nav-link">Login</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+{% endblock header %}
+
+{% block content %}
+    <div class="row">
+    <div class="col-1"></div>
+    <div class="col-10 justify-content-center text-center mb-4 mt-4">
+        {% block blogheader %}{% endblock blogheader %}
+    </div>
+    </div>
+    <div class="row border border-success">
+        <div class="col-1"></div>
+        <div class="col-2 border border-dark">
+            {% block blogsidebar %}{% endblock blogsidebar %}
+        </div>
+        <div class="col-8 border border-dark">
+            {% block blogcontent %}{% endblock blogcontent %}
+        </div>
+    </div>
+{% endblock content %}

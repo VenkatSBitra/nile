@@ -1,0 +1,18 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}
+    NILE
+{% endblock title %}
+
+{% block content %}
+    <div class="home_main">
+        <h1>Hello!</h1>
+        <br>
+        {% if user.is_authenticated %}
+            <p>Welcome, {{ user.get_username }}.</p>
+            {% if user.profile.phone_no == "None" %}
+                <p class="alert alert-danger">Please Update your Data in Profile Page.</p>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock content %}

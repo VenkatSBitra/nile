@@ -1,0 +1,32 @@
+{% extends 'blog/base.html' %}
+
+{% block blogheader %}
+    <h1>Post Detail</h1>
+{% endblock blogheader %}
+
+{% block blogcontent %}
+    <div class="card mt-4 mb-3 ml-2 mr-2" id="blog_card">
+        <div class="row no-gutters">
+            <div class="col-4 card_user_details pt-2 pb-2 border-right">
+                <img height="200" width="200" src="{{ object.author.profile.image.url }}" alt="Profile Picture">
+                <hr>
+                <a href="{% url 'user-posts' object.author %}" class="h5">{{ object.author.get_username }}</a>
+            </div>
+            <div class="col-8">
+                <div class="card-body">
+                    <h3 class="card-title">{{ object.title }}</h3>
+                    <p class="card-text text-muted">{{ object.date_posted }}</p>
+                    <hr>
+                    <p class="card-text h5">{{ object.content }}</p>
+                    <hr>
+                    <div class="card_user_details">
+                        {% if object.author == user %}
+                            <a class="btn btn-outline-primary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Update</a>
+                            <a class="btn btn-outline-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Delete</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock blogcontent %}

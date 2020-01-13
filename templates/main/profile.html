@@ -1,0 +1,21 @@
+{% extends 'shop/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Profile - {{ user.get_username }}
+{% endblock title %}
+
+{% block content %}
+    <img alt="{{ user.get_username }}" height="100" width="100" class="rounded-circle account-img" src="{{ user.profile.image.url }}">
+    <p>{{ user.get_username }}</p>
+    <p>{{ user.email }}</p>
+    <p>{{ user.profile.phone_no }}</p>
+
+    <form method="POST" class="form-group" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ u_form|crispy }}
+        {{ p_form|crispy }}
+        <button type="submit" class="btn btn-outline-success">Update Data</button>
+    </form>
+{% endblock content %}

@@ -1,0 +1,27 @@
+.home_main{
+    font-size: 120%;
+    font-family: "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+    color: aqua;
+}
+
+.navbar{
+    font-size: 200%;
+    background-color: #b8c291;
+    color: #c2651c;
+}
+
+.navbar-brand{
+    font-size: 150%;
+}
+
+.card_user_details{
+    margin-top: auto;
+    margin-bottom: auto;
+    text-align: center;
+    display: inline-block;
+}
+
+tbody.collapse.in{
+    display: table-row-group;
+}
+

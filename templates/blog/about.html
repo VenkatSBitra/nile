@@ -1,0 +1,21 @@
+{% extends 'blog/base.html' %}
+
+{% block blogheader %}
+    <h1>Blog About</h1>
+{% endblock blogheader %}
+
+{% block blogsidebar %}
+    <div>
+        {% if user.is_authenticated %}
+            <p class="h2">Want to Create a Post?</p>
+            <a href="{% url 'post-create' %}" class="btn btn-outline-primary">Create Post</a>
+        {% else %}
+            <p class="h2"><a href="{% url 'login' %}">Sign In</a> to create a post.</p>
+            <p class="h2">Don't have an account. Register <a href="{% url 'register' %}">here.</a></p>
+        {% endif %}
+    </div>
+{% endblock blogsidebar %}
+
+{% block blogcontent %}
+    <h2>Blog About Content</h2>
+{% endblock blogcontent %}

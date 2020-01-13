@@ -1,0 +1,44 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}
+    Orders
+{% endblock title %}
+
+{% block content %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Order Number</th>
+                <th scope="col">Order Date</th>
+                <th scope="col">Item Count</th>
+                <th scope="col">Total Cost</th>
+            </tr>
+        </thead>
+        {% for order in orders %}
+            <tbody>
+                <tr>
+                    <td><a href="{% url 'order' order.pk %}">Check</a> {{ order.pk }}</td>
+                    <td>{{ order.OrderDate }}</td>
+                    <td>{{ order.Items.count }}</td>
+                    <td>{{ order.get_total }}</td>
+                </tr>
+            </tbody>
+            <tbody id="{{ order.pk }}" class="collapse">
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Amount</th>
+                </tr>
+                {% for item in order.Items.all %}
+                    <tr>
+                        <td><img src="{{ item.Item.Image.url }}" alt=""></td>
+                        <td>{{ item.Item }}</td>
+                        <td>{{ item.Quantity }}</td>
+                        <td>{{ item.Item.FinalPrice }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        {% endfor %}
+    </table>
+{% endblock content %}

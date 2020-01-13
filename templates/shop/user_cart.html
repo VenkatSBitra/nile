@@ -1,0 +1,172 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+    {% if orderState == 0 %}
+        <table class="border table table-striped">
+            <thead class="thead-light">
+                <tr class="border">
+                    <th scope="col">Item Image</th>
+                    <th scope="col">Item Name</th>
+                    <th scope="col">Item Details</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if cartItems %}
+                {% for item in cartItems %}
+                    <tr>
+                        <td>
+                            <div>
+                                <img src="{{ item.Item.Image.url }}" alt="Image of {{ item.Item.Name }}" height="150">
+                            </div>
+                        </td>
+                        <td>{{ item.Item.Name }}</td>
+                        <td>{{ item.Item.Details }}</td>
+                        <td>
+                            <form method="post">
+                                {% csrf_token %}
+                                <br>
+                                <input type="number" value="{{ item.Quantity }}" name="updateq" min="1" max="{{ item.Item.Stock }}" class="form-control">
+                                <input type="hidden" value="{{ item.Item.pk }}" name="updatei">
+                                <br>
+                                <button type="submit" class="btn btn-outline-primary">Update</button>
+                            </form>
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" value="{{ item.Item.pk }}" name="remove">
+                                <br>
+                                <button type="submit" class="btn btn-outline-danger">Remove</button>
+                            </form>
+                        </td>
+                        <td>
+                            &#8377; {{ item.get_total_item_price }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="4">Final Price</td>
+                    <td>&#8377; {{ price }}</td>
+                </tr>
+            {% else %}
+                <td colspan="5">No items in your cart.</td>
+            {% endif %}
+            </tbody>
+        </table>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" value="{{ user.username }}" name="order">
+            <a href="{% url 'homePage' %}" class="btn btn-outline-primary">Continue Shopping</a>
+            {% if cartItems %}
+                <button type="submit" class="btn btn-outline-dark">Proceed to Checkout</button>
+            {% endif %}
+        </form>
+    {% elif orderState == 1 %}
+        <p>Delivery Address</p>
+        <form method="post">
+            {% csrf_token %}
+            {% if address %}
+                <label>
+                    Apartment Name: <input type="text" value="{{ address.Apartment }}" name="apartment" class="form-control">
+                </label>
+                <label>
+                    Street Name: <input type="text" value="{{ address.Street }}" name="street" class="form-control">
+                </label>
+                <label>
+                    Pin Code: <input type="text" value="{{ address.Zip }}" name="pin" maxlength="6" minlength="6" class="form-control">
+                </label>
+                <label>
+                    <select name="payment" class="form-control">
+                        <option value="1">Cash on Delivery</option>
+                        <option value="2">Card Payment on Delivery</option>
+                    </select>
+                </label>
+            {% else %}
+                <label>
+                    Apartment Name: <input type="text" placeholder="Apartment Name" name="apartment" minlength="1" class="form-control">
+                </label>
+                <label>
+                    Street Name: <input type="text" placeholder="Street Name" name="street" minlength="1" class="form-control">
+                </label>
+                <label>
+                    Pin Code: <input type="text" value="452001" name="pin" maxlength="6" minlength="6" class="form-control">
+                </label>
+                <label>
+                    <select name="payment" class="form-control">
+                        <option value="1">Cash on Delivery</option>
+                        <option value="2">Card Payment on Delivery</option>
+                    </select>
+                </label>
+            {% endif %}
+            {% if userAddresses %}
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Apartment</th>
+                            <th>Street</th>
+                            <th>Pin Code</th>
+                            <th>Select Address</th>
+                        </tr>
+                    </thead>
+
+                    {% for add in userAddresses %}
+                        {% if add.Zip != '' %}
+                        <tr>
+                            <td>{{ add.Apartment }}</td>
+                            <td>{{ add.Street }}</td>
+                            <td>{{ add.Zip }}</td>
+                            <td>
+                                <p>Confirm Order to this Address.</p>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" value="{{ add.pk }}" name="addId">
+                                    <button type="submit" class="btn btn-outline-warning">Select</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                </table>
+            {% endif %}
+            <a href="{% url 'cart' %}" class="btn btn-outline-danger">Cancel</a>
+            <button type="submit" class="btn btn-outline-primary">Order</button>
+        </form>
+    {% elif orderState == 2 %}
+        <table class="border table table-striped">
+            <thead>
+                <tr class="border">
+                    <th scope="col">Item Image</th>
+                    <th scope="col">Item Name</th>
+                    <th scope="col">Item Details</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                </tr>
+            </thead>
+
+            {% if cartItems %}
+                {% for item in cartItems %}
+                    <tr>
+                        <td><img src="{{ item.Item.Image.url }}" alt="" height="100"></td>
+                        <td>{{ item.Item.Name }}</td>
+                        <td>{{ item.Item.Details }}</td>
+                        <td>{{ item.Quantity }}</td>
+                        <td>&#8377; {{ item.get_total_item_price }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="4">Final Price</td>
+                    <td>&#8377; {{ price }}</td>
+                </tr>
+            {% endif %}
+        </table>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" value="{{ user.username }}" name="confirmorder">
+            <a href="{% url 'cart' %}" class="btn btn-outline-danger">Cancel</a>
+            <button type="submit" class="btn btn-outline-success">Confirm Order</button>
+        </form>
+    {% elif orderState == 3 %}
+        <p class="alert alert-success">Thank You for the purchase.</p>
+        <a href="{% url 'homePage' %}" class="btn btn-outline-primary">Go Home</a>
+    {% endif %}
+{% endblock content %}
